@@ -1,6 +1,6 @@
 # iOS 7 Safari · Android
 
-**一个致敬 iOS 7 Safari 的玩具安卓浏览器：用 Kotlin 和原生 View，把 2013 年那套「抽屉」任务视图逐帧复刻到了 Android 上。**
+**一个致敬 iOS 7 Safari 的玩具浏览器：用 Kotlin 和原生 View，把 2013 年那套「抽屉」任务视图逐帧复刻到了 Android 上。**
 
 点一下标签按钮，整张网页会「塌」成一张带俯角的倒梯形卡片，落进卡片堆里；点卡片，它又拉伸回一整页。
 没有 Compose，没有 Material Design，没有第三方 UI 库 —— 只有 Canvas、`Path`、位图，和一套自己算的透视几何。
@@ -16,7 +16,10 @@
 
 ## 这是什么
 
-一个跑在 Android （安卓）上的**仿 iOS 7 Safari 浏览器**，纯属玩具，也纯属致敬。
+一个跑在 Android 上的**仿 iOS 7 Safari 浏览器**，纯属玩具，也纯属致敬。
+
+> 如果你是在找「**安卓上类似 Safari 的浏览器**」「iOS 风格浏览器」「iOS 7 浏览器复刻」，那大概就是它：
+> 界面照 2013 年那台机器做，交互（尤其是标签页）按 Safari 的手感调。
 
 2013 年的 iOS 7 是扁平化设计的起点：毛玻璃、细发丝线、蓝色丝带，还有那个把网页变成一叠卡片的标签视图。
 那些东西在当年是「设计」，十年后再看更像一种手艺 —— 这个项目就是想把那套手艺，用 Android 的画笔重新做一遍。
@@ -309,7 +312,8 @@ Issue / PR 都欢迎。改动画相关的代码前，建议先读 [docs/ARCHITEC
 
 `Android` `Kotlin` `浏览器` `Browser` `WebView` `iOS 7` `iOS7` `Safari` `仿 iOS` `UI 复刻` `Clone`
 `任务视图` `Tab Switcher` `卡片式多标签` `3D 卡片` `抽屉特效` `形变动画` `Morph Animation` `自定义 View` `Canvas`
-`透视投影` `手势` `惯性滚动` `Fling` `高斯模糊` `双指缩放` `隐私模式` `阅读列表` `书签` `开源` `安卓` `安卓类似safari的浏览器` `安卓safari浏览器`
+`透视投影` `手势` `惯性滚动` `Fling` `高斯模糊` `双指缩放` `隐私模式` `阅读列表` `书签` `开源`
+`安卓浏览器` `类似 Safari` `iOS 风格浏览器` `iOS 7 复刻` `Android 仿 iOS`
 
 > 建仓时建议填的 GitHub Topics（仓库首页右上角 ⚙️ → Topics）：
 >
