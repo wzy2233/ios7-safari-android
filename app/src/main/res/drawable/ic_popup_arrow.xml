@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 菜单向上的小箭头（菜单显示在地址栏下方，箭头指着选区） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="10dp"
+    android:height="6dp"
+    android:viewportWidth="10"
+    android:viewportHeight="6">
+    <path
+        android:fillColor="#E6000000"
+        android:pathData="M0,6 L5,0 L10,6 Z" />
+</vector>

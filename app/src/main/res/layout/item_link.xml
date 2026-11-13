@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 书签 / 阅读列表 / 历史记录的列表行。
+     为了切换分段时量得快，层级压到最浅：外框竖排 = [正文(叠一个编辑模式的红「删除」)] + 分隔线。
+     已经没有 layout_weight（那会让每行多走一遍 measure），也没有 match_parent 的兄弟（同样会多量一遍）。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/ios_white"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/linkText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingTop="9dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="9dp">
+
+            <TextView
+                android:id="@+id/linkTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/linkUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/ios_text_sub"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 编辑模式下露出来的红色「删除」：浮在右侧，不再用 weight 抢宽度 -->
+        <TextView
+            android:id="@+id/btnRowDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/delete"
+            android:textColor="#FF3B30"
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="14dp"
+        android:background="@color/ios_hairline" />
+</LinearLayout>

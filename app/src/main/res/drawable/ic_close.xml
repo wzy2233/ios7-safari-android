@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS 7 标签卡片左上角的关闭叉：灰色细线叉，没有圆形底 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M8.2,8.2 L15.8,15.8 M15.8,8.2 L8.2,15.8"
+        android:strokeWidth="1.7"
+        android:strokeColor="#FF8E8E93"
+        android:strokeLineCap="round" />
+</vector>

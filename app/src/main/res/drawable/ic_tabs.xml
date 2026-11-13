@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  iOS 7 Safari 底栏「标签页」图标：两张同尺寸的圆角卡片，后一张偏右上、前一张偏左下。
+  外框 = x 4.5~19.5 / y 2.75~21.25，与分享、书签图标等高，竖向居中，不再扁。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 后面那张：只画没被前一张挡住的部分（上边、右边、右下角一小段、左侧一小截） -->
+    <path
+        android:pathData="M9.5,7.25 L9.5,4.55 A1.8,1.8 0 0 1 11.3,2.75 L17.7,2.75 A1.8,1.8 0 0 1 19.5,4.55 L19.5,14.95 A1.8,1.8 0 0 1 17.7,16.75 L14.5,16.75"
+        android:strokeWidth="1.5"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 前面那张：完整的圆角矩形 -->
+    <path
+        android:pathData="M6.3,7.25 L12.7,7.25 A1.8,1.8 0 0 1 14.5,9.05 L14.5,19.45 A1.8,1.8 0 0 1 12.7,21.25 L6.3,21.25 A1.8,1.8 0 0 1 4.5,19.45 L4.5,9.05 A1.8,1.8 0 0 1 6.3,7.25 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ios_white">
+
+    <!-- ============================================================
+         网页容器：**固定 viewport**。
+
+         高度 = 屏幕高 − 24dp（= 顶栏全部收起时的浏览区大小），窗口不缩放的期间永远不变；
+         栏收起/展开只用 webContainer.translationY（20dp·(1−p)）让它跟着顶栏下沿走。
+
+         为什么不能让它跟栏一起改高度：它一旦是 weight=1 的兄弟节点，栏的高度每变 1px
+         WebView 的 viewport 就变 1px，页面每帧都要重排一次（重页面 20~50ms/帧）——
+         这就是「地址栏/底栏收缩时跟着网页一起卡」的根。现在栏在**上面一层**，
+         改它们的布局高度只影响它们自己（3 个 View），碰不到 WebView。
+         ============================================================ -->
+    <FrameLayout
+        android:id="@+id/webContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp" />
+
+    <!-- ===== 栏：叠在网页之上。中间那一段空着（不吃触摸），事件直接落到下面网页上 ===== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- ===== iOS 7 Safari 顶栏（智能搜索框） ===== -->
+        <FrameLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@color/ios_bar_bg"
+            android:clickable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+
+                <FrameLayout
+                    android:id="@+id/fieldBox"
+                    android:layout_width="0dp"
+                    android:layout_height="34dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_field">
+
+                    <com.ios7.safari.UrlEditText
+                        android:id="@+id/urlField"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:background="@null"
+                        android:gravity="start|center_vertical"
+                        android:hint="@string/hint_search"
+                        android:imeOptions="actionGo"
+                        android:includeFontPadding="false"
+                        android:inputType="textUri"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="30dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@color/ios_text_sub"
+                        android:textColorHighlight="#4D007AFF"
+                        android:textCursorDrawable="@drawable/bg_cursor"
+                        android:textSelectHandle="@drawable/handle_none"
+                        android:textSelectHandleLeft="@drawable/handle_none"
+                        android:textSelectHandleRight="@drawable/handle_none"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/btnReload"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_reload" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/btnCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:paddingEnd="4dp"
+                    android:paddingStart="8dp"
+                    android:singleLine="true"
+                    android:text="@string/cancel"
+                    android:textColor="@color/ios_blue"
+                    android:textSize="18sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_gravity="bottom"
+                android:background="@color/ios_hairline" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="2.5dp"
+                android:layout_gravity="bottom"
+                android:progressDrawable="@drawable/bg_progress"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- ===== 中间空段：只是把底栏顶到屏幕底部。不吃触摸（不是 clickable），
+             这样下面的网页照样能收到滑动/点击。 ===== -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- ===== iOS 7 Safari 底栏：五个按钮等距分布（各占 1/5 宽，图标居中） ===== -->
+        <FrameLayout
+            android:id="@+id/bottomWrap"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:clickable="true">
+
+            <LinearLayout
+                android:id="@+id/bottomBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/ios_bar_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_back" />
+
+                <ImageView
+                    android:id="@+id/btnForward"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_forward" />
+
+                <ImageView
+                    android:id="@+id/btnShare"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_share" />
+
+                <ImageView
+                    android:id="@+id/btnBookmarks"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_bookmarks" />
+
+                <ImageView
+                    android:id="@+id/btnTabs"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_tabs" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/ios_hairline" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- ===== 浮层 ===== -->
+    <include
+        android:id="@+id/overlayTabs"
+        layout="@layout/overlay_tabs"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/overlayBookmarks"
+        layout="@layout/overlay_bookmarks"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/overlaySuggest"
+        layout="@layout/overlay_suggestions"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/overlayShare"
+        layout="@layout/overlay_share"
+        android:visibility="gone" />
+
+
+
+</FrameLayout>

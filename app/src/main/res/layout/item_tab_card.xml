@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_tab_card"
+    android:orientation="vertical">
+
+    <!-- iOS 7：标题居中，左上角一个没有圆形的关闭叉 -->
+    <FrameLayout
+        android:id="@+id/cardHeader"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/ios_card_header">
+
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_close" />
+
+        <TextView
+            android:id="@+id/cardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:textColor="@color/ios_black"
+            android:textSize="13sp" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/ios_hairline" />
+
+    <ImageView
+        android:id="@+id/cardThumb"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/ios_white"
+        android:scaleType="matrix" />
+</LinearLayout>

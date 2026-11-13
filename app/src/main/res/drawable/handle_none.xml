@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 把 Android 自带的 Material 选中手柄换成完全透明：iOS 7 的选区只有蓝色丝带，没有这种手柄 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <size
+        android:width="1dp"
+        android:height="1dp" />
+    <solid android:color="@android:color/transparent" />
+</shape>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iOS 7 Safari 复刻 · 界面预览</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 20px 60px;
+    background: #f2f3f5; color: #1c1c1e;
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .sub { color: #6b6b70; font-size: 13px; margin-bottom: 26px; }
+  .stage { display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start; }
+  .phone {
+    width: 320px; height: 650px; flex: none;
+    background: #fff; border-radius: 38px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.16), 0 0 0 8px #dcdce1, 0 0 0 9px #b9b9c0;
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  .screen { flex: 1; display: flex; flex-direction: column; position: relative; background: #fff; }
+
+  /* ---------- iOS 7 状态栏 ---------- */
+  .statusbar {
+    height: 20px; flex: none; background: #f9f9f9; position: relative;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 6px;
+    font-size: 11px; color: #000;
+  }
+  .sb-left { display: flex; align-items: center; }
+  .carrier { font-size: 11px; }
+  .wifi { width: 14px; height: 11px; margin-left: 4px; }
+  /* 时间绝对居中，不受左右内容宽度影响 */
+  .sbtime { position: absolute; left: 0; right: 0; text-align: center;
+            font-weight: 700; font-size: 12px; letter-spacing: .2px; pointer-events: none; }
+  .batt { display: flex; align-items: center; gap: 3px; font-size: 10px; }
+  .batt .box { width: 21px; height: 11px; border: 1.2px solid #000; border-radius: 2.6px; position: relative; }
+  /* 正极凸起 */
+  .batt .box::before { content: ""; position: absolute; right: -2.6px; top: 3px; width: 2px; height: 4.4px;
+                       background: #000; border-radius: 0 1px 1px 0; }
+  .batt .box::after { content: ""; position: absolute; inset: 2px auto 2px 2px; width: 15px; background: #000; border-radius: .8px; }
+
+  /* ---------- 顶栏 ---------- */
+  .topbar { height: 44px; flex: none; background: #f9f9f9; position: relative; display: flex; align-items: center; padding: 0 8px; }
+  .field {
+    flex: 1; height: 28px; background: #e9e9ea; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center; position: relative;
+    overflow: hidden; cursor: text; user-select: none; -webkit-user-select: none;
+  }
+  /* 网址外层：未聚焦时由 flex 居中，点进去后用 transform 平移到左对齐 */
+  .field .urlwrap { position: relative; display: inline-flex; align-items: center; }
+  /* 蓝色丝带：从一根细竖条向右铺开成整片高亮 */
+  .field .ribbon {
+    position: absolute; left: 0; top: 50%; height: 20px; margin-top: -10px; width: 0;
+    background: rgba(0, 122, 255, .30); border-radius: 1px;
+  }
+  .field .urltext { position: relative; font-size: 13px; color: #000; white-space: nowrap; }
+  .field .caret {
+    position: absolute; top: 50%; margin-top: -10px; width: 1.6px; height: 20px;
+    background: #007aff; opacity: 0; border-radius: .5px;
+  }
+  .field .reload { position: absolute; right: 6px; width: 16px; height: 16px; }
+  /* iOS 7 文本编辑菜单：半透明黑圆角条 + 向上的小箭头 */
+  .txtmenu { position: absolute; z-index: 30; display: none; }
+  .txtmenu .tip {
+    width: 0; height: 0; margin-left: 8px;
+    border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-bottom: 6px solid rgba(0,0,0,.9);
+  }
+  .txtmenu .bar { display: flex; align-items: stretch; background: rgba(0,0,0,.9); border-radius: 5px; height: 34px; }
+  .txtmenu .bar b {
+    color: #fff; font-weight: 400; font-size: 13px; padding: 0 12px;
+    display: flex; align-items: center; cursor: pointer; white-space: nowrap;
+  }
+  .txtmenu .bar b + b { border-left: .5px solid rgba(255,255,255,.35); }
+  .topbar::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: .5px; background: #c8c7cc; }
+  .progline { position: absolute; left: 0; bottom: 0; height: 2.5px; background: #007aff; width: 62%; }
+
+  /* ---------- 底栏 ---------- */
+  .bottombar {
+    height: 44px; flex: none; background: #f9f9f9; display: flex; align-items: center;
+    border-top: .5px solid #c8c7cc;
+  }
+  /* iOS 7：五个按钮等距分布，各占 1/5 宽，图标居中 */
+  .tbtn { flex: 1; height: 44px; display: flex; align-items: center; justify-content: center; }
+  .tbtn svg { width: 22px; height: 22px; }
+  svg .s { fill: none; stroke: #007aff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  svg .f { fill: #007aff; }
+
+  /* ---------- 内容 ---------- */
+  .content { flex: 1; overflow: hidden; background: #fff; position: relative; }
+  .page { padding: 16px; }
+  .page h2 { font-size: 20px; margin: 0 0 10px; }
+  .page p { font-size: 13px; line-height: 1.7; color: #3a3a3c; margin: 0 0 10px; }
+  .skeleton { background: #ececed; border-radius: 3px; height: 10px; margin-bottom: 8px; }
+  .sk-1 { width: 100%; } .sk-2 { width: 94%; } .sk-3 { width: 78%; }
+  .hero { height: 96px; background: linear-gradient(135deg,#dfe7f2,#eef2f7); border-radius: 6px; margin-bottom: 14px; }
+
+  /* ---------- 标签页视图 ---------- */
+  .tabview { position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden; }
+  /* 背景 = 当前页面的高斯模糊 */
+  .tabview::before {
+    content: ""; position: absolute; inset: -24px; filter: blur(18px); opacity: .95;
+    background: linear-gradient(180deg,#fff 0 16%,#dfe7f2 16% 33%,#fff 33% 62%,#eef0f4 62% 78%,#fff 78%), #eaeaf0;
+  }
+  .tabview > * { position: relative; z-index: 1; }
+  .tabscroll { flex: 1; overflow-y: auto; padding: 12.5% 0 26px; }
+  /* iOS 7：卡片纵向叠压成一摞，只露出每张卡的顶部 */
+  .card {
+    margin: 0 16px; background: #fff; border-radius: 5px; border: .6px solid #b5b5ba;
+    overflow: hidden; transform-origin: top center; box-shadow: 0 3px 10px rgba(0,0,0,.22);
+  }
+  .card + .card { margin-top: -242px; }
+  /* 从斜上方俯视：所有卡片同一个 24° 倾角、同一尺寸（上宽下窄的倒梯形）。
+     只有被手指推过画面上八分之一分界线的卡片才开始缩小，见 .card.shrink */
+  .card { transform: perspective(860px) rotateX(-24deg); }
+  .card.shrink { transform: perspective(860px) rotateX(-24deg) scale(.8); }
+  /* 标题居中；左上角一个没有圆形的灰色叉 */
+  .card .chead { height: 30px; background: #eaeaea; display: flex; align-items: center; justify-content: center;
+                 padding: 0 30px; position: relative; border-bottom: .5px solid #d8d8dc; }
+  .card .chead .x { position: absolute; left: 7px; top: 8px; width: 14px; height: 14px; }
+  .card .chead .x::before, .card .chead .x::after {
+    content: ""; position: absolute; left: 1px; right: 1px; top: 50%; height: 1.4px; background: #8e8e93;
+  }
+  .card .chead .x::before { transform: rotate(45deg); } .card .chead .x::after { transform: rotate(-45deg); }
+  .card .chead span { font-size: 12.5px; color: #000; max-width: 100%; overflow: hidden;
+                      text-overflow: ellipsis; white-space: nowrap; }
+  .card .thumb { height: 300px; display: flex; align-items: flex-start; padding: 10px 12px; }
+  .card .thumb .l1 { width: 40%; height: 9px; background: #dcdce0; border-radius: 2px; margin-bottom: 7px; }
+  .card .thumb .l2 { width: 72%; height: 9px; background: #e7e7ea; border-radius: 2px; margin-bottom: 7px; }
+  .card .thumb .l3 { width: 58%; height: 9px; background: #e7e7ea; border-radius: 2px; }
+  /* 底栏：iOS 7 的毛玻璃 —— 背后内容的高斯模糊 + 半透明白 */
+  .tabbar2 { height: 44px; flex: none; display: flex; align-items: center; padding: 0 14px;
+             border-top: .5px solid #c8c7cc; position: relative; overflow: hidden; }
+  .tabbar2::before { content: ""; position: absolute; inset: -14px; filter: blur(15px);
+                     background: linear-gradient(180deg,#e6e7ec,#d9dae0 55%,#f4f4f7); }
+  .tabbar2::after { content: ""; position: absolute; inset: 0; background: rgba(249,249,249,.76); }
+  .tabbar2 > * { position: relative; z-index: 2; }
+  .tabbar2 a { color: #007aff; font-size: 15px; text-decoration: none; }
+  .tabbar2 .sp { flex: 1; }
+
+  /* ---------- 书签面板 ---------- */
+  .bmpanel { position: absolute; inset: 0; background: #fff; display: flex; flex-direction: column; }
+  .bmtop { height: 44px; background: #f9f9f9; display: flex; align-items: center; justify-content: center;
+           font-size: 17px; font-weight: 600; border-bottom: .5px solid #c8c7cc; }
+  .seg { margin: 10px 12px 8px; height: 30px; display: flex; border: 1px solid #007aff; border-radius: 5px; overflow: hidden; }
+  .seg div { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #007aff; }
+  .seg div.on { background: #007aff; color: #fff; }
+  .row { padding: 10px 14px; border-bottom: .5px solid #e5e5ea; }
+  .row .t { font-size: 15px; color: #000; }
+  .row .u { font-size: 11.5px; color: #8e8e93; margin-top: 2px; }
+  .bmbar { height: 44px; background: #f9f9f9; display: flex; align-items: center; justify-content: flex-end;
+           padding-right: 14px; border-top: .5px solid #c8c7cc; }
+  .bmbar a { color: #007aff; font-size: 15px; text-decoration: none; }
+
+  .hidden { display: none !important; }
+
+  /* ---------- 侧栏说明 ---------- */
+  .notes { flex: 1; min-width: 300px; max-width: 560px; }
+  .notes h3 { font-size: 15px; margin: 22px 0 8px; }
+  .notes ul { margin: 0; padding-left: 20px; font-size: 13.5px; line-height: 1.9; color: #3a3a3c; }
+  .notes code { background: #e8e8ec; padding: 1px 5px; border-radius: 3px; font-size: 12.5px; }
+  .switch { display: flex; gap: 8px; margin-bottom: 18px; }
+  .switch button {
+    border: 1px solid #d0d0d6; background: #fff; color: #1c1c1e;
+    padding: 7px 14px; border-radius: 18px; font-size: 13px; cursor: pointer;
+  }
+  .switch button.on { background: #007aff; border-color: #007aff; color: #fff; }
+</style>
+</head>
+<body>
+
+<h1>iOS 7 Safari · 1:1 复刻浏览器</h1>
+<div class="sub">Android 端调用系统 WebView 的原生 App，界面按 iOS 7 时代 Safari 复刻。下面是三个主要界面的预览。</div>
+
+<div class="switch">
+  <button class="on" data-view="browse">浏览页</button>
+  <button data-view="tabs">标签页视图</button>
+  <button data-view="bookmarks">书签面板</button>
+</div>
+
+<div class="stage">
+  <div class="phone">
+    <div class="screen">
+
+      <div class="statusbar">
+        <div class="sb-left">
+          <span class="carrier">中国移动</span>
+          <svg class="wifi" viewBox="0 0 16 14"><path class="s" d="M1.1 4.4C4.9.8 11.1.8 14.9 4.4"/><path class="s" d="M4.2 7.7C6.6 5.5 9.4 5.5 11.8 7.7"/><path class="s" d="M6.9 10.5C7.4 10 8.6 10 9.1 10.5"/><circle class="f" cx="8" cy="12.6" r="1.15"/></svg>
+        </div>
+        <div class="sbtime">10:09</div>
+        <div class="batt"><span>79%</span><span class="box"></span></div>
+      </div>
+
+      <!-- 浏览页 -->
+      <div id="v-browse" style="display:flex;flex-direction:column;flex:1;">
+        <div class="topbar">
+          <div class="field" id="field">
+            <span class="urlwrap" id="urlwrap">
+              <i class="ribbon" id="ribbon"></i>
+              <span class="urltext" id="urltext" data-idle="apple.com.cn" data-full="https://www.apple.com.cn/">apple.com.cn</span>
+              <i class="caret" id="caret"></i>
+            </span>
+            <svg class="reload" viewBox="0 0 24 24"><path class="f" d="M17.65 6.35A7.96 7.96 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          </div>
+          <div class="txtmenu" id="txtmenu">
+            <div class="tip"></div>
+            <div class="bar" id="menubar"></div>
+          </div>
+          <div class="progline"></div>
+        </div>
+        <div class="content">
+          <div class="page">
+            <div class="hero"></div>
+            <h2>iPhone 5s</h2>
+            <div class="skeleton sk-1"></div>
+            <div class="skeleton sk-2"></div>
+            <div class="skeleton sk-3"></div>
+            <p style="margin-top:14px">网页由系统 WebView 渲染，UA 已替换为 iPhone iOS 7.0.2 的真实 Safari 标识。</p>
+          </div>
+        </div>
+        <div class="bottombar">
+          <div class="tbtn"><svg viewBox="0 0 24 24"><path class="s" d="M15.2 4.5 7.5 12 15.2 19.5"/></svg></div>
+          <div class="tbtn"><svg viewBox="0 0 24 24"><path class="s" d="M8.8 4.5 16.5 12 8.8 19.5"/></svg></div>
+          <div class="tbtn"><svg viewBox="0 0 24 24"><path class="s" d="M12 16.5V3.5M12 3.5 7.8 7.7M12 3.5 16.2 7.7"/><path class="s" d="M6 10.5H5c-.6 0-1 .5-1 1.1v7.8c0 .6.4 1.1 1 1.1h14c.6 0 1-.5 1-1.1v-7.8c0-.6-.4-1.1-1-1.1h-1"/></svg></div>
+          <div class="tbtn"><svg viewBox="0 0 24 24"><path class="s" d="M12 6.2C10.3 4.6 7.8 4.4 5.2 4.6c-.6.1-1 .5-1 1.1V19c0 .6.5 1 1.1 1 2.6-.2 5 0 6.7.6"/><path class="s" d="M12 6.2c1.7-1.6 4.2-1.8 6.8-1.6.6.1 1 .5 1 1.1V19c0 .6-.5 1-1.1 1-2.6-.2-5 0-6.7.6"/><path class="s" d="M12 6.2v14.4"/></svg></div>
+          <div class="tbtn"><svg viewBox="0 0 24 24"><path class="s" d="M9.5 7.25V4.55A1.8 1.8 0 0 1 11.3 2.75h6.4a1.8 1.8 0 0 1 1.8 1.8v10.4a1.8 1.8 0 0 1-1.8 1.8H14.5"/><path class="s" d="M6.3 7.25h6.4a1.8 1.8 0 0 1 1.8 1.8v10.4a1.8 1.8 0 0 1-1.8 1.8H6.3a1.8 1.8 0 0 1-1.8-1.8V9.05a1.8 1.8 0 0 1 1.8-1.8z"/></svg></div>
+        </div>
+      </div>
+
+      <!-- 标签页视图 -->
+      <div id="v-tabs" class="hidden" style="position:absolute;inset:0;">
+        <div class="tabview">
+          <div class="tabscroll">
+            <div class="card">
+              <div class="chead"><span class="x"></span><span>Apple</span></div>
+              <div class="thumb"><div style="width:100%"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div></div>
+            </div>
+            <div class="card">
+              <div class="chead"><span class="x"></span><span>zh.wikipedia.org</span></div>
+              <div class="thumb"><div style="width:100%"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div></div>
+            </div>
+            <div class="card">
+              <div class="chead"><span class="x"></span><span>百度一下，你就知道</span></div>
+              <div class="thumb"><div style="width:100%"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div></div>
+            </div>
+            <div class="card">
+              <div class="chead"><span class="x"></span><span>新标签页</span></div>
+              <div class="thumb"><div style="width:100%"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div></div>
+            </div>
+          </div>
+          <div class="tabbar2">
+            <a href="#">私密</a><span class="sp"></span>
+            <svg viewBox="0 0 24 24" style="width:22px;height:22px"><path class="s" d="M12 5v14M5 12h14"/></svg>
+            <span class="sp"></span><a href="#">完成</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 书签面板 -->
+      <div id="v-bookmarks" class="hidden" style="position:absolute;inset:0;">
+        <div class="bmpanel">
+          <div class="bmtop">书签</div>
+          <div class="seg"><div class="on">书签</div><div>阅读列表</div><div>历史记录</div></div>
+          <div style="flex:1;overflow:auto">
+            <div class="row"><div class="t">Apple</div><div class="u">https://www.apple.com.cn</div></div>
+            <div class="row"><div class="t">百度</div><div class="u">https://www.baidu.com</div></div>
+            <div class="row"><div class="t">Google</div><div class="u">https://www.google.com</div></div>
+            <div class="row"><div class="t">维基百科</div><div class="u">https://zh.wikipedia.org</div></div>
+            <div class="row"><div class="t">知乎</div><div class="u">https://www.zhihu.com</div></div>
+          </div>
+          <div class="bmbar"><a href="#">完成</a></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="notes">
+    <h3>已复刻的 iOS 7 Safari 细节</h3>
+    <ul>
+      <li>20pt 状态栏（信号点 / 运营商 / Wi-Fi / 时间 / 电池）+ 44pt 顶栏</li>
+      <li>统一「智能搜索框」：圆角 5pt、浅灰底、网址只显示一级域名</li>
+      <li>顶栏底部 2.5dp 蓝色加载进度条，加载中右侧变停止叉</li>
+      <li>44pt 底栏：<b>五个按钮等距分布</b>（各占 1/5 宽，图标居中），iOS 7 蓝色描边图标</li>
+      <li>下滑收起顶栏与底栏，上滑或回到顶部自动展开</li>
+      <li>标签页视图：<b>3D 卡片栈</b> —— 真实透视倾角（rotationX + cameraDistance），越往上倾角越大、越小；<b>可拖动</b>，滑动时卡片连续穿过「最前」焦点位并实时重算透视</li>
+      <li>进出场动画：进场卡片从当前页位置扇形展开、逐张错峰；退场选中卡片放大回页面、其余收拢淡出；关闭卡片向左飞出、下方卡片滑上补位</li>
+      <li>书签面板三段切换：书签 / 阅读列表 / 历史记录</li>
+      <li>私密浏览模式下顶栏底栏变深灰、图标转白、停止记录历史</li>
+      <li>左右边缘滑动前进后退；长按链接可新标签打开 / 拷贝</li>
+    </ul>
+    <h3>技术实现</h3>
+    <ul>
+      <li>渲染内核就是系统 <code>android.webkit.WebView</code>，未内置任何浏览器引擎</li>
+      <li>UA 设为 <code>iPhone iOS 7.0.2 Safari</code>，网站会返回移动端 / iOS 版页面</li>
+      <li>Kotlin + 原生 View，无第三方 UI 框架，minSdk 26</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const views = { browse: 'v-browse', tabs: 'v-tabs', bookmarks: 'v-bookmarks' };
+  document.querySelectorAll('.switch button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.switch button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      const target = views[b.dataset.view];
+      Object.values(views).forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById(target).classList.remove('hidden');
+    });
+  });
+
+  // ------------------------------------------------------------------
+  // 地址栏：点进去网址径向左移 + 蓝色丝带铺开（iOS 7 的细节）
+  // 缓动 f(t) = sin(t·π/2)，速度是 cos，从 1 衰减到 0 —— 先快后慢
+  // ------------------------------------------------------------------
+  (function () {
+    const field = document.getElementById('field');
+    const wrap = document.getElementById('urlwrap');
+    const ribbon = document.getElementById('ribbon');
+    const text = document.getElementById('urltext');
+    const caret = document.getElementById('caret');
+    const menu = document.getElementById('txtmenu');
+    const menubar = document.getElementById('menubar');
+    const PAD = 26;                       // 输入框内边距
+    const sine = t => Math.sin(t * Math.PI / 2);
+
+    let focused = false, ribbonOn = false, clip = null, longPressed = false;
+    let pressOff = 0, ribbonStart = 0, ribbonEnd = 0, holdTimer = 0, shift = 0;
+
+    const textW = () => text.getBoundingClientRect().width;
+    const fieldW = () => field.clientWidth;
+
+    function animate(dur, step) {
+      const t0 = performance.now();
+      requestAnimationFrame(function loop(now) {
+        const p = Math.min(1, (now - t0) / dur);
+        step(sine(p));
+        if (p < 1) requestAnimationFrame(loop);
+      });
+    }
+
+    function layout() {                   // 让网址始终左对齐到 PAD
+      shift = Math.max(0, (fieldW() - textW()) / 2 - PAD);
+      wrap.style.transform = `translateX(${-shift}px)`;
+    }
+
+    function enter() {
+      if (focused) return;
+      focused = true;
+      text.textContent = text.dataset.full;
+      const w = textW();
+      layout();
+      animate(300, e => {
+        const dx = shift * (1 - e);
+        wrap.style.transform = `translateX(${-dx.toFixed(2)}px)`;
+        ribbon.style.width = (1.6 + (w - 1.6) * e).toFixed(2) + 'px';
+      });
+      ribbonOn = true;
+      ribbonStart = 0; ribbonEnd = text.textContent.length;
+      ribbon.style.left = '0px';
+      caret.style.opacity = 0;
+    }
+
+    function collapse(off) {
+      ribbonOn = false;
+      ribbon.style.width = '0px';
+      caret.style.left = Math.max(0, Math.min(textW() - 2, off)) + 'px';
+      caret.style.opacity = 1;
+      hideMenu();
+    }
+
+    function reset() {
+      focused = false; ribbonOn = false;
+      ribbon.style.width = '0px';
+      caret.style.opacity = 0;
+      wrap.style.transform = 'translateX(0)';
+      text.textContent = text.dataset.idle;
+      hideMenu();
+    }
+
+    function shortRibbon(off) {
+      const w = textW(), len = text.textContent.length;
+      const from = Math.max(0, off - 26), to = Math.min(w, off + 44);
+      ribbonOn = true; ribbonStart = from; ribbonEnd = to;
+      ribbon.style.left = from + 'px';
+      caret.style.opacity = 0;
+      animate(160, e => { ribbon.style.width = ((to - from) * e).toFixed(2) + 'px'; });
+      const per = w / Math.max(1, len);
+      ribbon.sIdx = Math.round(from / per);
+      ribbon.eIdx = Math.round(to / per);
+    }
+
+    function showMenu(items, anchor) {
+      menubar.innerHTML = '';
+      items.forEach(label => {
+        const b = document.createElement('b');
+        b.textContent = label;
+        b.addEventListener('click', ev => {
+          ev.stopPropagation();
+          hideMenu();
+          doAction(label);
+        });
+        menubar.appendChild(b);
+      });
+      menu.style.display = 'block';
+      const pr = field.parentElement.getBoundingClientRect();
+      const fr = field.getBoundingClientRect();
+      menu.style.top = (fr.bottom - pr.top + 4) + 'px';
+      const mw = menu.offsetWidth;
+      const ax = fr.left - pr.left + anchor;        // anchor 是相对输入框的坐标
+      const x = Math.max(6, Math.min(pr.width - mw - 6, ax - mw / 2));
+      menu.style.left = x + 'px';
+      const tip = menu.querySelector('.tip');
+      tip.style.marginLeft = Math.max(6, Math.min(mw - 16, ax - x - 5)) + 'px';
+    }
+
+    function hideMenu() { menu.style.display = 'none'; }
+
+    function doAction(label) {
+      if (label === '复制') {
+        clip = text.textContent;
+        collapse(textW() - 2);            // 复制后丝带收起，只留光标
+      } else if (label === '粘贴') {
+        if (clip == null) return;
+        text.textContent = clip;
+        layout();
+        collapse(textW() - 2);
+      } else if (label === '删除') {
+        if (ribbonOn && ribbonStart === 0 && ribbonEnd >= textW() - 1) {
+          text.textContent = '';
+        } else {
+          const s = text.textContent;
+          text.textContent = s.slice(0, ribbon.sIdx || 0) +
+            s.slice(ribbon.eIdx == null ? s.length : ribbon.eIdx);
+        }
+        layout();
+        collapse(textW() - 2);
+      } else if (label === '全选') {
+        ribbonOn = true; ribbonStart = 0; ribbonEnd = textW();
+        ribbon.style.left = '0px';
+        ribbon.style.width = textW() + 'px';
+        caret.style.opacity = 0;
+        const items = ['复制']; if (clip != null) items.push('粘贴'); items.push('删除');
+        showMenu(items, PAD + textW() / 2);
+      }
+    }
+
+    field.addEventListener('pointerdown', e => {
+      const fr = field.getBoundingClientRect();
+      pressOff = e.clientX - fr.left - PAD;
+      longPressed = false;
+      clearTimeout(holdTimer);
+      holdTimer = setTimeout(() => {
+        longPressed = true;
+        if (!focused) enter();
+        if (ribbonOn) {
+          const items = ['复制']; if (clip != null) items.push('粘贴');
+          showMenu(items, PAD + textW() / 2);
+        } else {
+          shortRibbon(Math.max(0, pressOff));
+          const items = ['全选', '复制']; if (clip != null) items.push('粘贴'); items.push('删除');
+          showMenu(items, PAD + Math.max(0, pressOff));
+        }
+      }, 480);
+    });
+    field.addEventListener('pointerup', () => clearTimeout(holdTimer));
+    field.addEventListener('pointerleave', () => clearTimeout(holdTimer));
+    field.addEventListener('pointermove', () => clearTimeout(holdTimer));
+
+    field.addEventListener('click', e => {
+      if (longPressed) { longPressed = false; return; }
+      const fr = field.getBoundingClientRect();
+      const off = e.clientX - fr.left - PAD;
+      if (!focused) enter();
+      else collapse(Math.max(0, off));
+    });
+
+    document.addEventListener('click', e => {
+      if (!field.contains(e.target) && !menu.contains(e.target)) {
+        hideMenu();
+        if (focused && !field.contains(e.target)) reset();
+      }
+    });
+  })();
+</script>
+</body>
+</html>

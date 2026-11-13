@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlayTabsRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:clipChildren="false">
+
+    <!-- 高斯模糊背景：独立一层，永远在所有卡片（包括英雄视图）之下 -->
+    <FrameLayout
+        android:id="@+id/tabChrome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 当前页面的高斯模糊 -->
+        <ImageView
+            android:id="@+id/tabBgBlur"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <!-- 深色蒙版：压在模糊图之上，把整片背景压成「深黑」——模糊仍然透出来，
+             只是亮部被压暗（iOS 7 任务视图就是深色底，卡片浮在上面）。
+             原来是 #80D9D9DE（浅灰），现在是 70% 黑（再深一层就几乎看不出模糊了）。 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#B3000000" />
+    </FrameLayout>
+
+    <!-- 卡片列表 + 底栏：整体不淡出，卡片各自飞入 / 飞出 -->
+    <FrameLayout
+        android:id="@+id/tabFade"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:orientation="vertical">
+
+            <!-- clipChildren 必须为 true：卡片栈比视口长时（标签多了），卡片会画到 1830 以下、
+                 把浏览页的底栏盖掉；任务视图底栏一淡出，那条位置就露出「下面那张卡片」，
+                 看起来像"底栏真空"。clipToPadding 仍为 false：英雄视图要用负 margin 顶到 padding 之上。 -->
+            <com.ios7.safari.TabScrollView
+                android:id="@+id/tabScroll"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipChildren="true"
+                android:clipToPadding="false"
+                android:overScrollMode="always"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/tabList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:paddingTop="26dp"
+                    android:paddingBottom="220dp" />
+            </com.ios7.safari.TabScrollView>
+
+            <!-- iOS 7 标签页视图底栏：毛玻璃（截图高斯模糊 + 白色蒙版） -->
+            <FrameLayout
+                android:id="@+id/tabBottomWrap"
+                android:layout_width="match_parent"
+                android:layout_height="44dp">
+
+                <ImageView
+                    android:id="@+id/tabBarBlur"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY" />
+
+                <!-- 蒙版：普通模式白、私密模式深（颜色由 applyTheme 设置）。
+                     底栏本身**不能**有不透明底色，否则这条毛玻璃永远看不见。 -->
+                <View
+                    android:id="@+id/tabBarScrim"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#BFFFFFFF" />
+
+                <LinearLayout
+                    android:id="@+id/tabBottomBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
+
+                    <TextView
+                        android:id="@+id/btnPrivate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/private_mode"
+                        android:textColor="@color/ios_blue"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/btnDone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/done"
+                        android:textColor="@color/ios_blue"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <!-- 「＋」独立一层居中对齐：私密/完成 两段文字宽度不一样也不会把它挤歪 -->
+                <ImageView
+                    android:id="@+id/btnNewTab"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_gravity="center"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_plus" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/ios_hairline" />
+            </FrameLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- 进场 / 退场时承载「页面 ⇄ 倒梯形卡片」形变的英雄视图。
+         运行时会被搬进 tabList（排在末尾），再用 elevation 摆到它代表的
+         那张卡片的图层上 —— 图层关系恒定，动画里不会突然穿到最前面。 -->
+    <com.ios7.safari.TrapezoidView
+        android:id="@+id/heroCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+</FrameLayout>

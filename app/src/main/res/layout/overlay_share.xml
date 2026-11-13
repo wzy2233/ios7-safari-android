@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS 7 Safari 的分享面板：从屏幕下方升起的一张半截卡片 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlayShare"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone">
+
+    <!-- 压暗背景：点它等于取消 -->
+    <View
+        android:id="@+id/shareScrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#33000000" />
+
+    <!-- 卡片本体：底部对齐，进场时整块从屏幕下方升上来 -->
+    <LinearLayout
+        android:id="@+id/shareSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/ios_bar_bg"
+        android:orientation="vertical">
+
+        <!-- 顶部细线：卡片与页面之间的那条分隔（粗细 = 功能图标外框的线宽） -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.2dp"
+            android:background="@color/ios_share_line" />
+
+        <!-- 顶部留白：把卡片上边缘往上「加高」，app 们的屏幕位置一点不动，
+             但离上边缘更远了（同时这一行里「图标 + 名称」看起来也就居中了） -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <!-- 第一行：可以分享的 app（横向滑动，一屏正好 4 个） -->
+        <HorizontalScrollView
+            android:id="@+id/shareAppsScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/shareAppsRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp" />
+        </HorizontalScrollView>
+
+        <!-- 两行之间的分隔线（整行通栏，粗细 = 功能图标外框的线宽） -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.2dp"
+            android:background="@color/ios_share_line" />
+
+        <!-- 第二行：浏览器功能（同样横向滑动，一屏 4 个） -->
+        <HorizontalScrollView
+            android:id="@+id/shareFuncScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/shareFuncRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp" />
+        </HorizontalScrollView>
+
+        <!-- 功能行与「取消」之间的分隔线（同样粗细） -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.2dp"
+            android:background="@color/ios_share_line" />
+
+        <!-- 取消：居中蓝字，iOS 7 的高度约 44dp -->
+        <TextView
+            android:id="@+id/shareCancel"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/ios_blue"
+            android:textSize="17sp" />
+    </LinearLayout>
+</FrameLayout>

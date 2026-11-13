@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 磁贴几何必须和「起始页」那套 HTML 逐像素一致（50dp 图标 / 6dp 图标-标题间距 / 92dp 行距），
+     否则点地址栏时上移、退出时下移，两个界面的磁贴在衔接帧对不上，看着就是「跳一下」。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="12dp">
+
+    <ImageView
+        android:id="@+id/favIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_search" />
+
+    <TextView
+        android:id="@+id/favTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textColor="@android:color/black"
+        android:textSize="11sp" />
+</LinearLayout>

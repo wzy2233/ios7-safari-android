@@ -1,0 +1,28 @@
+# ---- 构建产物 ----
+build/
+app/build/
+.gradle/
+.kotlin/
+captures/
+*.apk
+*.aab
+
+# ---- 本机配置（含 SDK 路径，不要提交）----
+local.properties
+local.properties.bak
+
+# ---- IDE ----
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# ---- 系统 ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 日志 / 临时 ----
+*.log
+*.hprof

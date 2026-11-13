@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Safari</string>
+    <string name="hint_search">搜索或输入网址</string>
+    <string name="cancel">取消</string>
+    <string name="done">完成</string>
+    <string name="edit">编辑</string>
+    <string name="delete">删除</string>
+    <string name="private_mode">私密</string>
+    <string name="new_tab">新标签页</string>
+    <string name="seg_bookmarks">书签</string>
+    <string name="seg_reading">阅读列表</string>
+    <string name="seg_history">历史记录</string>
+    <string name="bookmarks_title">书签</string>
+    <string name="top_hits">最常访问</string>
+    <string name="search_engine">用必应搜索</string>
+    <string name="goto_site">前往此网站</string>
+    <string name="bm_and_history">书签与历史记录</string>
+    <string name="favorites">个人收藏</string>
+</resources>

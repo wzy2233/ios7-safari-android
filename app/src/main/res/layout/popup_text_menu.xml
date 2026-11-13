@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menuWrap"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/menuArrow"
+        android:layout_width="10dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="6dp"
+        android:src="@drawable/ic_popup_arrow" />
+
+    <LinearLayout
+        android:id="@+id/menuRow"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_popup_menu"
+        android:orientation="horizontal" />
+</LinearLayout>

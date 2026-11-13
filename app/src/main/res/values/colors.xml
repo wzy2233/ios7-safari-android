@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- iOS 7 系统蓝 -->
+    <color name="ios_blue">#FF007AFF</color>
+    <!-- Safari 工具栏底色（iOS 7 半透明毛玻璃的近似的浅灰白） -->
+    <color name="ios_bar_bg">#FFF9F9F9</color>
+    <color name="ios_white">#FFFFFFFF</color>
+    <!-- 应用图标（自适应图标）底色：取自图标磁贴的浅灰 -->
+    <color name="ic_launcher_background">#FFF5F5F5</color>
+    <color name="ios_black">#FF000000</color>
+    <!-- iOS 7 发丝级分隔线 -->
+    <color name="ios_hairline">#FFC8C7CC</color>
+    <!-- 分享面板的细线灰：比发丝线深一档，功能图标描边与行间分隔线共用 -->
+    <color name="ios_share_line">#FFB8B7BE</color>
+    <!-- 次级文字灰 -->
+    <color name="ios_text_sub">#FF8E8E93</color>
+    <!-- 标签页视图背景 -->
+    <color name="ios_tab_bg">#FFD9D9DE</color>
+    <!-- 标签卡片标题条 -->
+    <color name="ios_card_header">#FFEAEAEE</color>
+</resources>
