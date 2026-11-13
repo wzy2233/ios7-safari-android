@@ -12,6 +12,8 @@
 
 <sub>[English](#english) · [特色](#功能与特色) · [功能清单](#功能清单) · [技术说明](#技术说明) · [构建](#构建与运行) · [架构文档](docs/ARCHITECTURE.md)</sub>
 
+> 项目主页（截图 + 常见问题，手机上看更舒服）：<https://wzy2233.github.io/ios7-safari-android/>
+
 ---
 
 ## 这是什么
