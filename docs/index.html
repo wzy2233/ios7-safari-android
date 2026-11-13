@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>安卓上类似 Safari 的浏览器 · iOS 7 Safari 复刻（Android 开源）</title>
+<meta name="description" content="一个用 Kotlin 写的安卓浏览器，界面与交互复刻 iOS 7 Safari：3D 抽屉式任务视图、顶栏底栏自动收起、任意网页双指放大。安装包 1.7MB，调用系统 WebView，开源免费（MIT）。">
+<meta name="keywords" content="安卓 类似 Safari 的浏览器,iOS 风格浏览器,iOS 7 复刻,Android 浏览器,仿 iOS 浏览器,卡片式标签页,3D 任务视图,开源浏览器,轻量浏览器">
+<link rel="canonical" href="https://wzy2233.github.io/ios7-safari-android/">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="iOS 7 Safari · Android">
+<meta property="og:title" content="安卓上类似 Safari 的浏览器 · iOS 7 Safari 复刻">
+<meta property="og:description" content="3D 抽屉式任务视图、顶栏底栏自动收起、任意网页双指放大。1.7MB，调用系统 WebView，开源（MIT）。">
+<meta property="og:image" content="https://wzy2233.github.io/ios7-safari-android/screenshots/task-view.png">
+<meta property="og:url" content="https://wzy2233.github.io/ios7-safari-android/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%231a9bff'/%3E%3Cpath d='M50 50 L50 12 A38 38 0 0 1 88 50 Z' fill='%23ff3b30'/%3E%3C/svg%3E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "iOS 7 Safari · Android",
+  "applicationCategory": "BrowserApplication",
+  "operatingSystem": "Android 8.0+",
+  "softwareVersion": "7.0",
+  "fileSize": "1.7MB",
+  "inLanguage": "zh-CN",
+  "license": "https://opensource.org/licenses/MIT",
+  "url": "https://wzy2233.github.io/ios7-safari-android/",
+  "downloadUrl": "https://github.com/wzy2233/ios7-safari-android/releases/latest",
+  "codeRepository": "https://github.com/wzy2233/ios7-safari-android",
+  "description": "安卓上类似 Safari 的浏览器：复刻 iOS 7 Safari 的界面与交互，3D 抽屉式任务视图、顶栏底栏自动收起、任意网页双指放大，1.7MB，调用系统 WebView。",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
+}
+</script>
+<style>
+  :root{
+    --blue:#007AFF; --blue-d:#0062CC; --ink:#1C1C1E; --muted:#6E6E73;
+    --bg:#F2F2F7; --card:#FFFFFF; --line:rgba(60,60,67,.10);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Microsoft YaHei",
+      "Helvetica Neue",Arial,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--blue); text-decoration:none}
+  img{max-width:100%; display:block}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 22px}
+
+  /* ---- 顶栏 ---- */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:rgba(245,245,247,.82); backdrop-filter:saturate(180%) blur(18px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex; align-items:center; justify-content:space-between; height:56px}
+  .brand{font-weight:600; font-size:15px; color:var(--ink); letter-spacing:.2px}
+  .brand b{color:var(--blue)}
+  .nav nav{display:flex; align-items:center; gap:22px}
+  .nav nav a{font-size:14px; color:var(--muted)}
+  .nav nav a:hover{color:var(--ink)}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    height:40px; padding:0 20px; border-radius:20px;
+    font-size:15px; font-weight:500; border:1px solid var(--line);
+    background:#fff; color:var(--ink); transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,0,0,.08)}
+  .btn.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+  .btn.primary:hover{background:var(--blue-d); border-color:var(--blue-d)}
+  .btn.small{height:32px; padding:0 14px; font-size:14px}
+
+  /* ---- Hero ---- */
+  .hero{
+    display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center;
+    padding:64px 0 40px;
+  }
+  .eyebrow{
+    display:inline-block; margin:0 0 14px; padding:5px 12px; border-radius:999px;
+    background:rgba(0,122,255,.10); color:var(--blue);
+    font-size:13px; font-weight:600; letter-spacing:.3px;
+  }
+  h1{font-size:44px; line-height:1.18; margin:0 0 18px; letter-spacing:-.5px; font-weight:700}
+  h1 span{display:block; font-size:24px; font-weight:500; color:var(--muted); margin-top:12px; letter-spacing:0}
+  .lead{font-size:17px; color:var(--muted); margin:0 0 26px; max-width:52ch}
+  .actions{display:flex; gap:12px; flex-wrap:wrap}
+  .meta{font-size:13px; color:var(--muted); margin:16px 0 0}
+  .shot{
+    border-radius:28px; overflow:hidden; background:#000;
+    box-shadow:0 30px 60px -20px rgba(20,30,60,.45), 0 0 0 8px #111, 0 0 0 9px #333;
+    transform:perspective(1200px) rotateY(-12deg) rotateX(4deg) rotateZ(-1deg);
+    transition:transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .shot:hover{transform:perspective(1200px) rotateY(-4deg) rotateX(1deg) rotateZ(0)}
+
+  /* ---- 通用小节 ---- */
+  section{padding:56px 0}
+  h2{font-size:30px; margin:0 0 8px; letter-spacing:-.3px}
+  .sub{color:var(--muted); margin:0 0 32px; font-size:16px}
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+  .card{
+    background:var(--card); border-radius:var(--radius); padding:24px;
+    border:1px solid var(--line); box-shadow:0 1px 2px rgba(0,0,0,.04);
+  }
+  .card h3{margin:0 0 8px; font-size:17px; display:flex; align-items:center; gap:10px}
+  .card p{margin:0; color:var(--muted); font-size:14.5px}
+  .dot{
+    width:26px; height:26px; border-radius:9px; flex:0 0 26px;
+    background:linear-gradient(160deg,#3FCBFF,#0A6BFF);
+    display:inline-flex; align-items:center; justify-content:center;
+    color:#fff; font-size:13px; font-weight:700;
+  }
+  .wide{grid-column:span 3}
+  .wide-in{display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:center}
+  .kv{list-style:none; margin:0; padding:0; font-size:15px}
+  .kv li{display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid var(--line)}
+  .kv li:last-child{border-bottom:0}
+  .kv span{color:var(--muted)}
+  .kv b{font-weight:600}
+  .quote{
+    font-size:15px; color:var(--muted); border-left:3px solid var(--blue);
+    padding:2px 0 2px 14px; margin:18px 0 0;
+  }
+  details{
+    background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:16px 20px; margin-bottom:12px;
+  }
+  details summary{cursor:pointer; font-weight:600; font-size:15.5px; list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+"; float:right; color:var(--muted); font-weight:400}
+  details[open] summary::after{content:"–"}
+  details p{color:var(--muted); font-size:14.5px; margin:12px 0 0}
+  code{
+    background:rgba(120,120,128,.12); padding:2px 6px; border-radius:6px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px;
+  }
+  pre{
+    background:#1C1C1E; color:#E8E8ED; padding:16px 18px; border-radius:12px;
+    overflow:auto; font-size:13px; line-height:1.55;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  footer{
+    border-top:1px solid var(--line); padding:36px 0 56px; color:var(--muted); font-size:13.5px;
+  }
+  footer p{margin:6px 0}
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr; gap:36px; padding-top:36px}
+    h1{font-size:34px} h1 span{font-size:19px}
+    .shot{transform:none; max-width:340px; margin:0 auto}
+    .grid{grid-template-columns:1fr}
+    .wide{grid-column:span 1}
+    .wide-in{grid-template-columns:1fr}
+    .nav nav a:not(.btn){display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="./"><b>iOS 7</b> Safari · Android</a>
+    <nav>
+      <a href="#features">特色</a>
+      <a href="#tech">技术</a>
+      <a href="#faq">常见问题</a>
+      <a class="btn small" href="https://github.com/wzy2233/ios7-safari-android/releases/latest">下载 APK</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">开源 · MIT · 1.7MB</p>
+        <h1>安卓上类似 Safari 的浏览器
+          <span>把 iOS 7 的标签页，重新做了一遍</span>
+        </h1>
+        <p class="lead">
+          点一下标签按钮，整张网页「塌」成一张带俯角的倒梯形卡片，落进卡片堆里；点卡片，它又拉伸回一整页。
+          这是 2013 年 iOS 7 Safari 最标志性的一幕 —— 现在它跑在 Android 上，用 Kotlin 和原生 View 逐帧复刻。
+        </p>
+        <div class="actions">
+          <a class="btn primary" href="https://github.com/wzy2233/ios7-safari-android/releases/latest">下载 APK（1.7MB）</a>
+          <a class="btn" href="https://github.com/wzy2233/ios7-safari-android">查看源码</a>
+        </div>
+        <p class="meta">Android 8.0+ · 调用系统 WebView · 零第三方 UI 库 · 安装包 1.7MB</p>
+      </div>
+      <div class="shot">
+        <img src="screenshots/task-view.png" width="1080" height="2160"
+             alt="任务视图：一叠带俯角的倒梯形卡片，最新的一页在最前面">
+      </div>
+    </section>
+  </div>
+
+  <div class="wrap" id="features">
+    <section>
+      <h2>为什么它值得一看</h2>
+      <p class="sub">不是换皮主题，也不是套壳浏览器。下面每一条都有对应的实现。</p>
+      <div class="grid">
+        <div class="card">
+          <h3><i class="dot">1</i>3D 抽屉式任务视图</h3>
+          <p>动画里的卡片不是缩略图，是当前页面的真实像素：截图后逐条带做透视绘制，动画期间 WebView 不动、不重绘。</p>
+        </div>
+        <div class="card">
+          <h3><i class="dot">2</i>和 Safari 一样的 UI</h3>
+          <p>44dp 顶底栏、0.5dp 发丝线、蓝色胶囊地址栏、浮起的「取消」，图标全是 Canvas 画的，没有一张位图。</p>
+        </div>
+        <div class="card">
+          <h3><i class="dot">3</i>顶栏底栏自动收起</h3>
+          <p>往上滑，顶栏从 44dp 收到 24dp、底栏压到 0 并淡出。关键是网页不会重新排版，只做整数像素平移。</p>
+        </div>
+        <div class="card">
+          <h3><i class="dot">4</i>任意网页双指放大</h3>
+          <p>注入脚本放宽 <code>maximum-scale</code>，但保留网站原本的宽度和初始缩放，所以放大也不会把版式搞乱。</p>
+        </div>
+        <div class="card">
+          <h3><i class="dot">5</i>书签 / 阅读列表 / 历史</h3>
+          <p>iOS 那种三段式切换控件，支持编辑、删除、清空。数据存本地，不需要账号，也不联网同步。</p>
+        </div>
+        <div class="card">
+          <h3><i class="dot">6</i>隐私模式</h3>
+          <p>切深色配色，但页面和标签全部保留 —— 不像别的浏览器那样销毁再重建，也不记录历史。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="wrap" id="tech">
+    <section>
+      <h2>极致轻量：1.7MB</h2>
+      <p class="sub">一个现代浏览器动辄上百 MB，是因为它自带内核。这个项目不重复造内核。</p>
+      <div class="grid">
+        <div class="card wide">
+          <div class="wide-in">
+            <div>
+              <ul class="kv">
+                <li><span>安装包</span><b>1.7 MB（1,744,402 字节）</b></li>
+                <li><span>浏览器内核</span><b>调用系统 WebView</b></li>
+                <li><span>第三方依赖</span><b>仅 androidx.core-ktx</b></li>
+                <li><span>图标</span><b>矢量，3.4 KB</b></li>
+                <li><span>代码量</span><b>7,421 行 Kotlin</b></li>
+                <li><span>许可</span><b>MIT，可自由修改</b></li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0 0 12px;color:var(--muted);font-size:15px">
+                Android 每个系统里都已经有一个 WebView，所以这里只做「壳」和交互：不打包 Chromium，界面全部自绘，
+                连图标都改成了矢量。
+              </p>
+              <p class="quote">
+                自己编一遍也很简单，装好 JDK 17 和 Android SDK 34：
+              </p>
+              <pre>git clone https://github.com/wzy2233/ios7-safari-android.git
+cd ios7-safari-android
+./gradlew assembleDebug</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="wrap" id="faq">
+    <section>
+      <h2>常见问题</h2>
+      <p class="sub">搜「安卓类似 Safari 的浏览器」的人，通常会问这几件事。</p>
+
+      <details open>
+        <summary>安卓上真的能做出 Safari 那种标签页效果吗？</summary>
+        <p>能。难点在于 WebView 是硬件层，做不了梯形透视（那是非仿射变换）。这里的做法是「截真实像素 → 逐条带绘制」：
+        用 PixelCopy 读 GPU 合成后的画面，再交给自绘 View 按针孔相机模型一条一条贴图。动画期间 WebView 完全不动，所以不掉帧。</p>
+      </details>
+
+      <details>
+        <summary>为什么只有 1.7MB？会不会功能很少？</summary>
+        <p>体积小是因为不打包浏览器内核，用的是系统 WebView —— 这和「功能少」是两件事。地址栏动画、3D 任务视图、
+        双指缩放、书签/阅读列表/历史、分享面板、隐私模式、边缘滑动后退全都有。省下来的是内核的六七十兆。</p>
+      </details>
+
+      <details>
+        <summary>和 iOS 上的 Safari 是什么关系？</summary>
+        <p>没有任何关系。这是一个个人写的玩具项目，致敬 2013 年那套设计，与 Apple 无关联、未获授权。
+        仓库里也不包含任何 Apple 素材：图标是照着旧版截图重新量、重新画的矢量，字体用系统字体。</p>
+      </details>
+
+      <details>
+        <summary>需要什么系统版本？能装在自己的手机上吗？</summary>
+        <p>Android 8.0（API 26）及以上。到 <a href="https://github.com/wzy2233/ios7-safari-android/releases/latest">Releases</a>
+        下载 APK 直接安装即可（允许「安装未知来源应用」）。目前是 debug 签名，自己编译更放心。</p>
+      </details>
+
+      <details>
+        <summary>可以拿去改吗？</summary>
+        <p>可以，MIT 许可。改动画相关代码前建议先看仓库里的
+        <a href="https://github.com/wzy2233/ios7-safari-android/blob/main/docs/ARCHITECTURE.md">架构文档</a>，
+        里面记了一堆「看起来能简化、一改就抖」的地方。</p>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>iOS 7 Safari · Android</b> —— 一个致敬 iOS 7 的玩具浏览器，MIT 许可。</p>
+    <p>非官方项目，与 Apple Inc. 无关联；不包含任何 Apple 素材。「Safari」「iOS」是其各自权利人的商标。</p>
+    <p>
+      <a href="https://github.com/wzy2233/ios7-safari-android">GitHub 仓库</a> ·
+      <a href="https://github.com/wzy2233/ios7-safari-android/releases/latest">下载</a> ·
+      <a href="https://github.com/wzy2233/ios7-safari-android/blob/main/docs/ARCHITECTURE.md">架构文档</a>
+    </p>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "安卓上真的能做出 Safari 那种标签页效果吗？",
+      "acceptedAnswer": { "@type": "Answer", "text": "能。WebView 是硬件层，做不了梯形透视，所以用 PixelCopy 截取真实像素，再交给自绘 View 按针孔相机模型逐条带绘制，动画期间 WebView 不动。" }
+    },
+    {
+      "@type": "Question",
+      "name": "为什么只有 1.7MB？会不会功能很少？",
+      "acceptedAnswer": { "@type": "Answer", "text": "因为不打包浏览器内核，调用系统 WebView，省掉六七十兆；地址栏动画、3D 任务视图、双指缩放、书签、阅读列表、历史、分享、隐私模式都有。" }
+    },
+    {
+      "@type": "Question",
+      "name": "和 iOS 上的 Safari 是什么关系？",
+      "acceptedAnswer": { "@type": "Answer", "text": "没有关系。这是一个个人玩具项目，致敬 2013 年的设计，与 Apple 无关联、未获授权，仓库内不含任何 Apple 素材。" }
+    },
+    {
+      "@type": "Question",
+      "name": "需要什么系统版本？",
+      "acceptedAnswer": { "@type": "Answer", "text": "Android 8.0（API 26）及以上，下载 APK 直接安装。" }
+    }
+  ]
+}
+</script>
+</body>
+</html>
