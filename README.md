@@ -309,7 +309,7 @@ Issue / PR 都欢迎。改动画相关的代码前，建议先读 [docs/ARCHITEC
 
 `Android` `Kotlin` `浏览器` `Browser` `WebView` `iOS 7` `iOS7` `Safari` `仿 iOS` `UI 复刻` `Clone`
 `任务视图` `Tab Switcher` `卡片式多标签` `3D 卡片` `抽屉特效` `形变动画` `Morph Animation` `自定义 View` `Canvas`
-`透视投影` `手势` `惯性滚动` `Fling` `高斯模糊` `双指缩放` `隐私模式` `阅读列表` `书签` `开源`
+`透视投影` `手势` `惯性滚动` `Fling` `高斯模糊` `双指缩放` `隐私模式` `阅读列表` `书签` `开源` `安卓` `安卓类似safari的浏览器` `安卓safari浏览器`
 
 > 建仓时建议填的 GitHub Topics（仓库首页右上角 ⚙️ → Topics）：
 >
